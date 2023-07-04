@@ -16,7 +16,6 @@
                     slidesToShow: 3,
                     slidesToScroll: 2,
                     infinite: false,
-                    dots:false
                 }
             },
             {
@@ -24,7 +23,10 @@
                 setting: {
                     slidesToShow: 2,
                     slidesToScroll: 2,
-                    autoplay:true
+                    //if slidesToScroll is bigger than slidesToShow it will return slidesToShow for slidesToScroll
+                    // slidesToShow: 2, //slidesToShow: 2
+                    // slidesToScroll: 5 //slidesToScroll: slidesToShow
+                    autoplay:false
                 }
             },
             {
@@ -98,6 +100,7 @@
         }
 
         const sliderWidth = () => sliderItems.querySelector(".slide").clientWidth
+        const cursorStyle = (style) => sliderItems.style.cursor = style;
 
         const sliderItemsLength = () => sliderItems.getElementsByClassName('slide').length
 
@@ -148,8 +151,10 @@
         const isFirst = () => {
             const {movementSlide, reminderSlides} = splitSlides()
             if (index === 0 && backwardSlide) {
+                console.log("1")
                 return slidesToShow;
             } else {
+                console.log("2")
                 return index === movementSlide && reminderSlides !== 0 ? reminderSlides : slidesToScroll
             }
         }
@@ -226,6 +231,7 @@
 
                 } else if (dir === -1) {
                     backwardSlide = true;
+                    console.log(posInitial)
                     sliderItems.style.transform = `translate3d(${posInitial + sliderWidth() * -dir * isFirst()}px,0,0)`;
                     if (index + dir < 0) {
                         index = movementSlide
@@ -495,7 +501,7 @@
         }
 
         function slide() {
-
+            cursorStyle('grab')
             if(lazyLoadS)
             lazy()
 
@@ -572,12 +578,13 @@
         }
 
         function dragStart(e) {
+            cursorStyle("grabbing")
             if(autoplayS)
             clearInterval(interval)
             if (allowShift) {
 
                 touch = true
-                posInitial = offsetLeftPosition();
+                posInitial = sliderItems.getBoundingClientRect().left;
 
                 if (e.type === 'touchstart') {
                     posX1 = e.touches[0].clientX;
@@ -607,6 +614,7 @@
 
         function dragEnd() {
             if (!outside) {
+                cursorStyle("grab")
                 if(autoplayS)
                 autoPlay()
                 console.log("drag end")
